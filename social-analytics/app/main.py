@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app.routers import hashtag_router,comment_router,user_router,post_router,post_hashtag_router
 from app.core.db import Base, engine
+from app.services.hashtag_engine import HashtagEngine
 
 app = FastAPI(title="Social Media Analytics API")
 app.include_router(user_router.router)

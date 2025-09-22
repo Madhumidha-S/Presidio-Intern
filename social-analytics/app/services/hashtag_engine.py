@@ -20,7 +20,7 @@ class HashtagEngine:
     
     def ingest_post(self, post_id: int, tags: List[str], db: Optional[Session] = None) -> None:
 
-        tags = list(dict.fromkeys([t.lower() for t in tags]))  # unique preserve order
+        tags = list(dict.fromkeys([t.lower() for t in tags]))
         if not tags:
             return
 

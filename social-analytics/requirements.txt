@@ -3,6 +3,7 @@ sqlalchemy
 uvicorn
 fastapi
 pydantic
+pydantic[email]
 psycopg2-binary
 alembic
 pytest
