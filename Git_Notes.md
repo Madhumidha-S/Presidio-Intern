@@ -8,6 +8,7 @@
 - Best Practices
 - Squash, Amend, CI/CD, LFS
 - Cherry Pick, Git Hooks
+- Stash and Github Actions
 
 ### Best Practices
 
@@ -55,4 +56,12 @@ git branch --merged | grep -v "\*" | xargs -n 1 git branch -d
 
 # Cherry Pick
 git cherry-pick code
+
+# Stash
+git stash or git stash push
+git stash pop
+git stash list
+git stash apply
+git stash drop
+git stash clear
 ```
