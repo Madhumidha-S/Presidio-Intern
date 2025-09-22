@@ -1,31 +1,20 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-from app.schemas.comment_schema import CommentCreate, CommentResponse
-from app.services.comment_service import CommentService
+from app.services import comment_service
 from app.core.db import get_db
+from app.schemas.comment_schema import CommentCreate, CommentResponse
+from typing import List
 
-router = APIRouter(
-    prefix="/posts/{post_id}/comments",
-    tags=["comments"]
-)
+router = APIRouter(prefix="/comments", tags=["Comments"])
 
-def get_comment_service(db: Session = Depends(get_db)):
-    return CommentService(db)
-
-@router.get("/", response_model=List[CommentResponse])
-def get_comments(post_id: int, service: CommentService = Depends(get_comment_service)):
-    try:
-        comments = service.get_comments_by_post(post_id)
-        return comments
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+@router.get("/post/{post_id}", response_model=List[CommentResponse])
+def get_comments(post_id: int, db: Session = Depends(get_db)):
+    return comment_service.get_comments_by_post(post_id, db)
 
 @router.post("/", response_model=CommentResponse)
-def create_comment(post_id: int, comment: CommentCreate, service: CommentService = Depends(get_comment_service)):
-    try:
-        new_comment = service.create_comment(post_id, comment)
-        return new_comment
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+def create_comment(comment: CommentCreate, db: Session = Depends(get_db)):
+    return comment_service.create_comment(comment, db)
+
+@router.delete("/{comment_id}")
+def delete_comment(comment_id: int, db: Session = Depends(get_db)):
+    return comment_service.delete_comment(comment_id, db)

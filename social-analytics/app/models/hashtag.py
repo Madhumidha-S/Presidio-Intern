@@ -5,5 +5,5 @@ class Hashtag(Base):
     __tablename__ = "hashtags"
 
     id = Column(Integer, primary_key=True, index=True)
-    tag = Column(String(100), unique=True, nullable=False, index=True)
+    tag = Column(String(100), unique=True, nullable=False)
     count = Column(Integer, default=0)

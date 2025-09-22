@@ -1,21 +1,21 @@
-from collections import defaultdict
-hashtag_counts = defaultdict(int)
-co_occurrence = defaultdict(lambda: defaultdict(int))
+from sqlalchemy.orm import Session
+from app.models.hashtag import Hashtag
+from app.schemas.hashtag_schema import HashtagCreate
 
-def add_hashtags(post_hashtags: list[str]):
-    for i, tag in enumerate(post_hashtags):
-        hashtag_counts[tag] += 1
-        for j, other in enumerate(post_hashtags):
-            if i != j:
-                co_occurrence[tag][other] += 1
+def get_hashtags(db: Session):
+    return db.query(Hashtag).all()
 
-def get_trending(limit=5):
-    return sorted(hashtag_counts.items(), key=lambda x: x[1], reverse=True)[:limit]
+def create_hashtag(hashtag_data: HashtagCreate, db: Session):
+    hashtag = Hashtag(**hashtag_data.dict())
+    db.add(hashtag)
+    db.commit()
+    db.refresh(hashtag)
+    return hashtag
 
-def recommend(tag: str):
-    if tag not in co_occurrence:
-        return []
-    total = hashtag_counts[tag]
-    related = [(other, count) for other, count in co_occurrence[tag].items() if count / total > 0.3]
-    related.sort(key=lambda x: x[1], reverse=True)
-    return [t for t, _ in related[:3]]
+def delete_hashtag(hashtag_id: int, db: Session):
+    hashtag = db.query(Hashtag).filter(Hashtag.id == hashtag_id).first()
+    if not hashtag:
+        return {"error": f"Hashtag with id {hashtag_id} not found"}
+    db.delete(hashtag)
+    db.commit()
+    return {"message": f"Hashtag {hashtag_id} deleted"}

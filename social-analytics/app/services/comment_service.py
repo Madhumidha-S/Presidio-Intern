@@ -1,16 +1,21 @@
-def get_comment_depth(comment: dict):
-    if not comment.get("replies"):
-        return 1
-    return 1 + max(get_comment_depth(reply) for reply in comment["replies"])
+from sqlalchemy.orm import Session
+from app.models.comment import Comment
+from app.schemas.comment_schema import CommentCreate
 
-def find_viral_chains(comment: dict, chain=None, chains=None):
-    if chain is None: chain = []
-    if chains is None: chains = []
-    chain.append(comment["id"])
-    if not comment.get("replies"):
-        chains.append(chain.copy())
-    else:
-        for reply in comment["replies"]:
-            find_viral_chains(reply, chain, chains)
-    chain.pop()
-    return chains
+def get_comments_by_post(post_id: int, db: Session):
+    return db.query(Comment).filter(Comment.post_id == post_id).all()
+
+def create_comment(comment_data: CommentCreate, db: Session):
+    comment = Comment(**comment_data.dict())
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    return comment
+
+def delete_comment(comment_id: int, db: Session):
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if not comment:
+        return {"error": f"Comment with id {comment_id} not found"}
+    db.delete(comment)
+    db.commit()
+    return {"message": f"Comment {comment_id} deleted"}

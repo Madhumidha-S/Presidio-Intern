@@ -1,21 +1,24 @@
 from sqlalchemy.orm import Session
 from app.models.post import Post
-from app.repositories.hashtag_repo import get_or_create_hashtag, increment_hashtag_count
-from app.models.post_hashtag import PostHashtag
+from app.schemas.post_schema import PostCreate
 
-def create_post_with_hashtags(db: Session, user_id: int, content: str, tags: list[str]):
-    post = Post(user_id=user_id, content=content)
+def get_posts(db: Session):
+    return db.query(Post).all()
+
+def get_post(post_id: int, db: Session):
+    return db.query(Post).filter(Post.id == post_id).first()
+
+def create_post(post_data: PostCreate, db: Session):
+    post = Post(**post_data.dict())
     db.add(post)
-    db.flush() 
-    try:
-        for tag in tags:
-            h = get_or_create_hashtag(db, tag)
-            ph = PostHashtag(post_id=post.id, hashtag_id=h.id)
-            db.add(ph)
-            increment_hashtag_count(db, h.id, delta=1)
-        db.commit()
-        db.refresh(post)
-        return post
-    except Exception:
-        db.rollback()
-        raise
+    db.commit()
+    db.refresh(post)
+    return post
+
+def delete_post(post_id: int, db: Session):
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        return {"error": f"Post with id {post_id} not found"}
+    db.delete(post)
+    db.commit()
+    return {"message": f"Post {post_id} deleted"}
