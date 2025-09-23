@@ -37,12 +37,65 @@ app.use((req, res, next) => {
 - Transaction or transactional middleware
 - Error-handling Middleware
 - Built-in Middleware
-- Third-party Middleware
+- Third-party Middleware(morgan)
 
 ## Difference between Application Level and Router Level Middleware
 
 Application-level middleware is like a personal assistant that helps out with every incoming request.
-`app.use(params...);`
+
+```
+app.use(express.json()); 
+app.use((req, res, next) => {
+  console.log('Request received:', req.method, req.url);
+  next();
+});
+```
 
 Router-level middleware is more specialized - it only applies to particular routing paths you choose.
-`router.use(params...);`
+
+```
+const router = express.Router();
+router.use((req, res, next) => {
+  console.log('Router-specific middleware');
+  next();
+});
+router.get('/dashboard', (req, res) => {
+  res.send('Dashboard Page');
+});
+app.use('/user', router);
+```
+
+## Error Handling Middleware
+```
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
+```
+
+## Built-in Middleware
+```
+app.use(express.static('public'));
+app.use(express.json());
+```
+
+## Middleware Chaining
+
+Middleware can be chained from one to another, Hence creating a chain of functions that are executed in order. The last function sends the response back to the browser. So, before sending the response back to the browser the different middleware processes the request.
+
+`next()` - responsible for this.
+
+```
+-- Syntax
+const middleware1 = (req, res, next) => {
+// Tasks
+next();
+};
+const middleware2 = (req, res, next) => {
+// Tasks
+next();
+};
+app.get('/example', middleware1, middleware2, (req, res) => {
+  // Route handler
+});
+```
