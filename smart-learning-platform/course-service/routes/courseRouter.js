@@ -3,6 +3,7 @@ const router = express.Router();
 const courseController = require("../controllers/courseController");
 const auth = require("../middleware/authMiddleware");
 const roleCheck = require("../middleware/roleMiddleware");
+const recommendationsLimiter = require("../middleware/rateLimit");
 
 const STUDENT = 3,
   TEACHER = 2,
@@ -33,7 +34,21 @@ router.get(
   courseController.getSubmissions
 );
 
+router.get(
+  "/recommendations",
+  auth,
+  recommendationsLimiter,
+  courseController.getRecommendations
+);
+
 module.exports = router;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Courses
+ *   description: Course management
+ */
 
 /**
  * @swagger
@@ -44,14 +59,9 @@ module.exports = router;
  *     responses:
  *       200:
  *         description: List of courses
- */
-router.get("/", auth, courseController.getCourses);
-
-/**
- * @swagger
- * /course:
+ *
  *   post:
- *     summary: Create a new course
+ *     summary: Create a new course (teacher/admin only)
  *     tags: [Courses]
  *     requestBody:
  *       required: true
@@ -69,16 +79,37 @@ router.get("/", auth, courseController.getCourses);
  *     responses:
  *       201:
  *         description: Course created
- *       403:
- *         description: Forbidden
+ *
+ * /course/enroll:
+ *   post:
+ *     summary: Enroll in a course (student only)
+ *     tags: [Courses]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               course_id:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Enrolled successfully
  */
-router.post("/", auth, roleCheck(combinedRoles), courseController.createCourse);
 
 /**
  * @swagger
- * /assignment:
+ * tags:
+ *   name: Assignments
+ *   description: Assignment management
+ */
+
+/**
+ * @swagger
+ * /course/assignment:
  *   post:
- *     summary: Create a new assignment
+ *     summary: Create an assignment (teacher/admin only)
  *     tags: [Assignments]
  *     requestBody:
  *       required: true
@@ -91,25 +122,34 @@ router.post("/", auth, roleCheck(combinedRoles), courseController.createCourse);
  *                 type: integer
  *               title:
  *                 type: string
- *               description:
- *                 type: string
  *               due_date:
  *                 type: string
- *                 format: date-time
- *                 example: "2025-10-15T23:59:00Z"
+ *                 format: date
  *     responses:
  *       201:
- *         description: Assignment created successfully
- *       400:
- *         description: Invalid input
- */
-
-/**
- * @swagger
- * /submit:
+ *         description: Assignment created
+ *
+ * /course/assignments:
  *   post:
- *     summary: Submit an assignment
- *     tags: [Submissions]
+ *     summary: Get all assignments for a course
+ *     tags: [Assignments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               course_id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: List of assignments for the course
+ *
+ * /course/submit:
+ *   post:
+ *     summary: Submit an assignment (student only)
+ *     tags: [Assignments]
  *     requestBody:
  *       required: true
  *       content:
@@ -119,10 +159,71 @@ router.post("/", auth, roleCheck(combinedRoles), courseController.createCourse);
  *             properties:
  *               assignment_id:
  *                 type: integer
- *                 example: 3
+ *               content:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Submission successful
- *       400:
- *         description: Already submitted or invalid
+ *         description: Assignment submitted
+ *
+ * /course/submissions/{assignment_id}:
+ *   get:
+ *     summary: Get submissions for assignment (teacher/admin only)
+ *     tags: [Assignments]
+ *     parameters:
+ *       - in: path
+ *         name: assignment_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Assignment ID
+ *     responses:
+ *       200:
+ *         description: List of submissions
+ *
+ * /course/recommendations:
+ *   get:
+ *     summary: Get recommended courses (top-rated)
+ *     description: Returns a list of top-rated courses. Limited to 10 requests per minute per user.
+ *     tags: [Courses]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of recommended courses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       title:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       category:
+ *                         type: string
+ *                       rating:
+ *                         type: number
+ *                         format: float
+ *                       instructor_id:
+ *                         type: integer
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *       429:
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Too many requests, please try again later."
  */

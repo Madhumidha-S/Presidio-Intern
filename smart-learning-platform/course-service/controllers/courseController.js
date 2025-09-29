@@ -100,3 +100,12 @@ exports.getSubmissions = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getRecommendations = async (req, res, next) => {
+  try {
+    const courses = await Course.getRecommendations(5);
+    res.json({ recommendations: courses });
+  } catch (err) {
+    next(err);
+  }
+};

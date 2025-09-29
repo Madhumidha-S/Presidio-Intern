@@ -34,6 +34,14 @@ const Course = {
     const result = await pool.query("SELECT * FROM courses WHERE id=$1", [id]);
     return result.rows[0];
   },
+
+  async getRecommendations(limit = 5) {
+    const { rows } = await pool.query(
+      "SELECT * FROM courses ORDER BY rating DESC LIMIT $1",
+      [limit]
+    );
+    return rows;
+  },
 };
 
 module.exports = Course;
