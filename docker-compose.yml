@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  user-service:
+    build: ./smart-learning-platform/user-service
+    ports:
+      - "3000:3000"
+
+  course-service:
+    build: ./smart-learning-platform/course-service
+    ports:
+      - "3001:3000"
