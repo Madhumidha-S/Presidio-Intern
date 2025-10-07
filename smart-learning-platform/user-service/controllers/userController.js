@@ -1,4 +1,5 @@
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const logger = require("../utils/logger");
 const bcrypt = require("bcryptjs");
 const User = require("../models/users");
@@ -31,7 +32,9 @@ exports.signup = async (req, res, next) => {
     const token = generateToken(newUser);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production" || "development",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
     res.status(201).json({
@@ -55,13 +58,30 @@ exports.login = async (req, res, next) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
+    // Get role name for response
+    const roleData = await Role.findById(user.role_id);
+
     const token = generateToken(user);
+
+    // Set token cookie (consistent naming)
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.json({ message: "Login successful" });
+    // Return user data for frontend
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role_id: user.role_id,
+        role: roleData ? roleData.name : "unknown",
+      },
+    });
   } catch (err) {
     next(err);
     logger.error(err.message);

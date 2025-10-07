@@ -8,7 +8,7 @@ const recommendationsLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip,
+  keyGenerator: rateLimit.ipKeyGenerator,
 });
 
 module.exports = recommendationsLimiter;

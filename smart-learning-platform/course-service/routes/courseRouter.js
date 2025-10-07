@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const courseController = require("../controllers/courseController");
-const auth = require("../middleware/authMiddleware");
+const { authMiddleware } = require("../middleware/authMiddleware");
 const roleCheck = require("../middleware/roleMiddleware");
 const recommendationsLimiter = require("../middleware/rateLimit");
 
@@ -11,32 +11,32 @@ const STUDENT = 3,
 
 const combinedRoles = [TEACHER, ADMIN];
 
-router.get("/", auth, courseController.getCourses);
-router.post("/", auth, roleCheck(combinedRoles), courseController.createCourse);
-router.post("/enroll", auth, roleCheck([STUDENT]), courseController.enroll);
+router.get("/", authMiddleware, courseController.getCourses);
+router.post("/", authMiddleware, roleCheck(combinedRoles), courseController.createCourse);
+router.post("/enroll", authMiddleware, roleCheck([STUDENT]), courseController.enroll);
 router.post(
   "/assignment",
-  auth,
+  authMiddleware,
   roleCheck(combinedRoles),
   courseController.createAssignment
 );
 router.post(
   "/submit",
-  auth,
+  authMiddleware,
   roleCheck([STUDENT]),
   courseController.submitAssignment
 );
-router.get("/assignments", auth, courseController.getAssignments);
+router.get("/assignments", authMiddleware, courseController.getAssignments);
 router.get(
   "/submissions/:assignment_id",
-  auth,
+  authMiddleware,
   roleCheck(combinedRoles),
   courseController.getSubmissions
 );
 
 router.get(
   "/recommendations",
-  auth,
+  authMiddleware,
   recommendationsLimiter,
   courseController.getRecommendations
 );

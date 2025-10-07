@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("swagger-jsdoc");
-
+const cors = require("cors");
 const routes = require("./routes");
 
 const app = express();
@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 const options = {
   definition: {

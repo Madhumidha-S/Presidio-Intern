@@ -5,11 +5,21 @@ const logger = require("./utils/logger");
 const router = require("./routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("swagger-jsdoc");
+const studentRouter = require("./routes/studentRouter.js");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
+const analyticsRouter = require("./routes/analytics");
+const teachersRouter = require("./routes/teachers");
+
+app.use("/analytics", analyticsRouter);
+app.use("/teachers", teachersRouter);
+
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use("/", router);
 
