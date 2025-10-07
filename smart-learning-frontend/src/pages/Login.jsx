@@ -50,7 +50,7 @@ const Login = () => {
         className="bg-white shadow-xl rounded-3xl p-10 w-[400px] space-y-6 border border-gray-200"
       >
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
-          Smart Learning Platform
+          Smart Learn
         </h2>
 
         {error && (

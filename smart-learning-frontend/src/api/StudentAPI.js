@@ -1,8 +1,17 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const API = axios.create({
   baseURL: "http://localhost:3001/student",
   withCredentials: true,
+});
+
+API.interceptors.request.use((config) => {
+  const token = Cookies.get("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export const fetchStudents = async ({ page = 1, search = "" }) => {
@@ -15,8 +24,8 @@ export const addStudent = async (student) => {
   return data;
 };
 
-export const updateStudent = async ({ id, ...student }) => {
-  const { data } = await API.put(`/${id}`, student);
+export const updateStudent = async ({ id, payload }) => {
+  const { data } = await API.put(`/${id}`, payload);
   return data;
 };
 

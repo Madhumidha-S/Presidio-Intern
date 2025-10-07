@@ -63,7 +63,7 @@ const TeacherDashboard = () => {
   });
 
   const onSubmit = (formData) => {
-    if (editing) updateMutation.mutate({ id: editing.id, ...formData });
+    if (editing) updateMutation.mutate({ id: editing.id, payload: formData });
     else addMutation.mutate(formData);
   };
 
@@ -76,7 +76,7 @@ const TeacherDashboard = () => {
       <Sidebar
         links={[
           { to: "/teacher", label: "Students" },
-          { to: "/courses", label: "Courses" },
+          { to: "/teacher/courses", label: "Courses" },
         ]}
       />
       <div className="flex-1 flex flex-col">
