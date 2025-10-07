@@ -55,7 +55,6 @@ const StudentsPage = () => {
     onError: (err) => toast.error(err?.message || "Delete failed"),
   });
 
-  // handlers
   const onOpenAdd = () => { setEditing(null); setFormOpen(true); };
   const onOpenEdit = (s) => { setEditing(s); setFormOpen(true); };
   const onOpenDelete = (id) => { setDeletingId(id); setConfirmOpen(true); };

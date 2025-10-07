@@ -15,13 +15,13 @@ const StudentDashboard = () => {
 
       <div className="bg-white p-6 rounded-xl shadow border max-w-md">
         <p className="text-gray-600 mb-2">
-          <strong>Email:</strong> {user?.email || "student@gmail.com"}
+          <strong>Email:</strong> {user?.email || "shiv@gmail.com"}
         </p>
         <p className="text-gray-600 mb-2">
           <strong>Role:</strong> Student
         </p>
         <p className="text-gray-600">
-          <strong>Joined:</strong> March 2008
+          <strong>Joined:</strong> March 2025
         </p>
       </div>
     </DashboardLayout>

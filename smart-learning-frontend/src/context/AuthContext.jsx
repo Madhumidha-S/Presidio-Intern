@@ -10,13 +10,13 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkUser = async () => {
-      const token = Cookies.get("token");
-      if (!token) return setLoading(false);
+      // const token = Cookies.get("token");
+      // if (!token) return setLoading(false);
       try {
         const res = await userApi.get("/profile");
         setUser(res.data.user);
       } catch (err) {
-        console.error(err);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -34,13 +34,18 @@ export const AuthProvider = ({ children }) => {
     setUser(res.data.user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await userApi.post("/logout");
+    } catch {}
     Cookies.remove("token");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, loading, profile }}>
+    <AuthContext.Provider
+      value={{ user, setUser, login, logout, loading, profile }}
+    >
       {children}
     </AuthContext.Provider>
   );
