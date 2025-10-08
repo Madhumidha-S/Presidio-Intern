@@ -25,12 +25,12 @@ The overall definition of the CI/CD process, defined in a YAML file. And Trigger
 - Building and testing pull requests
 - Deploying your application every time a release is created
 - Adding a label whenever a new issue is opened
-(Writing Workflow)[https://docs.github.com/en/actions/how-tos/write-workflows]
+[Writing Workflow](https://docs.github.com/en/actions/how-tos/write-workflows)
 
 #### **Event**
 The specific activity that triggers the workflow. Events can be triggered by GitHub activities (like `push`, `pull_request`, etc.) or scheduled events (like `cron`).
 
-(Event Triggers)[http://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows]
+[Event Triggers](http://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
 
 #### **Job**
 A set of steps that execute on the same runner. Jobs can run in parallel or sequentially, and you can define dependencies between jobs. You can also use a **matrix** to run the same job multiple times, each with a different combination of variables—like operating systems or language versions. 
@@ -71,8 +71,8 @@ An individual task that can run commands or use actions. Steps are executed in t
 2. GitHub searches the .github/workflows directory in the root of your repository for workflow files that are present in the associated commit SHA or Git ref of the event.
 3. A workflow run is triggered for any workflows that have on: values that match the triggering event. Some events also require the workflow file to be present on the default branch of the repository in order to run.
 
-(Starter Workflow)[https://github.com/actions/starter-workflows/tree/main/deployments]
-(Workflow Syntax for GitHub Actions)[https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#about-yaml-syntax-for-workflows]
+[Starter Workflow](https://github.com/actions/starter-workflows/tree/main/deployments)
+[Workflow Syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#about-yaml-syntax-for-workflows)
 
 ## YAML Syntax
 
@@ -83,5 +83,5 @@ An individual task that can run commands or use actions. Steps are executed in t
   - `on`: The event(s) that trigger the workflow.
   - `jobs`: A collection of jobs to be run as part of the workflow. 
 
-(Complete Syntax)[https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onevent_nametypes]
+[Complete Syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onevent_nametypes)
 
