@@ -2,6 +2,8 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const logger = require("./utils/logger");
+const analyticsRouter = require("./controllers/analytics");
+const teachersRouter = require("./controllers/teachers");
 const router = require("./routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("swagger-jsdoc");
@@ -12,9 +14,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-
-const analyticsRouter = require("./routes/analytics");
-const teachersRouter = require("./routes/teachers");
 
 app.use("/analytics", analyticsRouter);
 app.use("/teachers", teachersRouter);
