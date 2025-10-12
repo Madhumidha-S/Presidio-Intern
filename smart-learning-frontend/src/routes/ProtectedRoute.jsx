@@ -7,8 +7,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (loading) return <Loader />;
 
-  if (!user) return <Navigate to="/login" />;
-  if (allowedRoles && !allowedRoles.includes(user.role_id)) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/" />;
+  if (allowedRoles && !allowedRoles.includes(user.role_id))
+    return <Navigate to="/" />;
 
   return children;
 };
