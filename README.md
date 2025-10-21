@@ -1,4 +1,4 @@
-# Challenge 6 - RAG Project
+# Challenge 5 - RAG Project
 
 ## Project Overview
 
